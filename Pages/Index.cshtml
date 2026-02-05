@@ -1,0 +1,263 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Othello";
+}
+
+<div class="d-flex flex-column justify-content-center align-items-center mt-4 bg-black">
+    <h2 class="fw-bold">Othello</h2>
+    <p>Current Player: <span id="currentPlayer">-</span></p>
+
+    <div class="score-card mb-3">
+        <div class="player">
+            <span id="player1Name">-</span>
+            <span class="score" id="player1Score">0</span>
+        </div>
+        <div class="player">
+            <span id="player2Name">-</span>
+            <span class="score" id="player2Score">0</span>
+        </div>
+    </div>
+
+    <div id="board" class="board"></div>
+
+    <div class="mt-3">
+        <button class="btn btn-warning me-2" onclick="passTurn()">Pass</button>
+        <button class="btn btn-success" onclick="startGame()">Restart Game</button>
+    </div>
+</div>
+
+<style>
+.board {
+
+    display: grid;
+    grid-template-columns: repeat(8, 50px);
+    grid-template-rows: repeat(8, 50px);
+    border-radius: 15px;
+    gap: 3px;
+    @* gap: 0; /* gap dihilangkan, pakai border sel saja */ *@
+    border: 4px solid #000; /* bingkai papan */
+    @* background-color: #006400; /* hijau papan Othello */ *@
+    background-color: #3D800D;
+    padding: 5px;
+    
+
+}
+.cell {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: #006400; /* hijau papan */
+    @* border: 1px solid #000;   /* garis antar sel */ *@
+    display: flex;
+    align-items: center;
+    
+    justify-content: center;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+.black, .white {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.black { background-color: black; }
+.white { background-color: white; }
+.valid-move {
+    border: 2px solid yellow;
+}
+.score-card {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    width: 400px;
+    background-color: #fff;
+    border-radius: 20px;
+    padding: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+.player {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.score {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+}
+.invalid {
+    background-color: red !important;
+}
+.piece {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* awal warna */
+.black { background-color: black; }
+.white { background-color: white; }
+
+/* class untuk flip */
+.flip {
+    transform: rotateY(180deg);
+}
+
+</style>
+
+<script>
+const boardDiv = document.getElementById("board");
+const currentPlayerSpan = document.getElementById("currentPlayer");
+const player1NameSpan = document.getElementById("player1Name");
+const player2NameSpan = document.getElementById("player2Name");
+const player1ScoreSpan = document.getElementById("player1Score");
+const player2ScoreSpan = document.getElementById("player2Score");
+
+let players = []; // Akan diisi dari API
+
+async function startGame() {
+    // ambil nama dari input atau default
+    const playerNames = ["Deria","Syafa"]; // Bisa diambil input form nanti
+
+    const res = await fetch("http://localhost:5002/Othello/start", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(playerNames)
+    });
+
+    if (!res.ok) {
+        console.error("Failed to start game", await res.text());
+        return;
+    }
+
+    const data = await res.json();
+    players = [data.currentPlayer.name, playerNames.find(n => n !== data.currentPlayer.name)];
+    
+    // Update UI nama pemain otomatis
+    player1NameSpan.innerText = players[0];
+    player2NameSpan.innerText = players[1];
+
+    await loadStatus();
+}
+
+async function loadStatus() {
+    const statusRes = await fetch("http://localhost:5002/Othello/status");
+    if (!statusRes.ok) {
+        const text = await statusRes.text();
+        console.error("Error loading status:", text);
+        return;
+    }
+
+    const data = await statusRes.json();
+        console.log("Data dari API loadStatus:", data);
+
+    const boardData = data.board;
+    const currentPlayer = data.currentPlayer;
+    const validMoves = data.validMoves;
+    const scores = data.score
+
+    // Update current player
+    currentPlayerSpan.innerText = `${currentPlayer.name} (${currentPlayer.color})`;
+
+    // Build board
+    boardDiv.innerHTML = "";
+    for (let r = 0; r < boardData.size; r++) {
+        for (let c = 0; c < boardData.size; c++) {
+            const cell = boardData.cells[r][c];
+            const cellDiv = document.createElement("div");
+            cellDiv.className = "cell";
+            if (cell.piece) cellDiv.innerHTML = `<div class="${cell.piece.color.toLowerCase()}"></div>`;
+            cellDiv.addEventListener("click", () => play(r, c));
+            boardDiv.appendChild(cellDiv);
+        }
+    }
+
+    function flipPiece(cellDiv, newColor) {
+    const pieceDiv = cellDiv.querySelector(".black, .white");
+    if (!pieceDiv) return;
+
+    // tambahkan class flip
+    pieceDiv.classList.add("flip");
+
+    // tunggu setengah animasi lalu ganti warnanya
+    setTimeout(() => {
+        if (newColor === "Black") {
+            pieceDiv.classList.remove("white");
+            pieceDiv.classList.add("black");
+        } else {
+            pieceDiv.classList.remove("black");
+            pieceDiv.classList.add("white");
+        }
+    }, 300); // setengah durasi animasi
+
+    // hapus class flip setelah selesai
+    setTimeout(() => pieceDiv.classList.remove("flip"), 600);
+}
+
+    // Highlight valid moves
+    for (const pos of validMoves) {
+        const index = pos.row * boardData.size + pos.col;
+        boardDiv.children[index].classList.add("valid-move");
+    }
+
+    // Update scores dinamis berdasarkan warna
+    const playerDivs = document.querySelectorAll(".score-card .player");
+    for (let div of playerDivs) {
+        const nameSpan = div.querySelector("span:first-child");
+        const scoreSpan = div.querySelector(".score");
+
+        if (nameSpan && scoreSpan) {
+            // Cari warna pemain ini
+            const playerName = nameSpan.innerText;
+            // Ambil warna dari API currentPlayer atau players list
+            const color = playerName === currentPlayer.name ? currentPlayer.color : (currentPlayer.color === "Black" ? "White" : "Black");
+            scoreSpan.innerText = color === "Black" ? scores.black : scores.white;
+        }
+    }
+}
+
+async function play(row, col) {
+    const res = await fetch("http://localhost:5002/Othello/play", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ row, col })
+    });
+    if (!res.ok) {
+
+        console.error("Invalid move");
+         const index = row * 8 + col;
+        const cell = boardDiv.children[index];
+        if (cell) {
+            cell.classList.add("invalid");
+            setTimeout(() => cell.classList.remove("invalid"), 600);
+        }
+
+        return;
+    }
+    await loadStatus();
+}
+
+async function passTurn() {
+    await fetch("http://localhost:5002/Othello/pass", { method: "POST" });
+    await loadStatus();
+}
+
+function highlightInvalidCell(row, col) {
+    const index = row * 8 + col; // board 8x8
+    const cell = boardDiv.children[index];
+    if (!cell) return;
+
+    cell.classList.add("invalid");
+    setTimeout(() => {
+        cell.classList.remove("invalid");
+    }, 600); // 0.6 detik merah
+}
+
+startGame();
+</script>
