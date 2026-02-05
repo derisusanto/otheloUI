@@ -1,0 +1,197 @@
+.board {
+
+    display: grid;
+    grid-template-columns: repeat(8, 50px);
+    grid-template-rows: repeat(8, 50px);
+    border-radius: 15px;
+    gap: 3px; 
+    border: 4px solid #000; 
+     /* background-color: #006400;  */
+    background-color: #3D800D;
+    padding: 5px;
+    
+
+}
+.cell {
+    width: 50px;
+    height: 50px;
+    border-radius: 10px;
+    background-color: #006400;
+     /* border: 1px solid #000;   */
+    display: flex;
+    align-items: center;
+    
+    justify-content: center;
+    cursor: pointer;
+    box-sizing: border-box;
+}
+.black, .white {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+}
+.black { background-color: black; }
+.white { background-color: white; }
+.valid-move {
+    border: 2px solid yellow;
+}
+.score-card{
+    display:flex;
+    width:400px;
+    background:#1c1c1c;
+    border-radius:14px;
+    overflow:hidden;
+}
+
+.player-half{
+    flex:1;
+    padding:15px;
+    text-align:center;
+    transition:0.25s ease;
+    background:#2a2a2a;
+    color:white;
+    position:relative;
+    z-index:1;
+}
+
+.player-half.active{
+    background:#1f8f3a;
+    transform:translateY(-8px) scale(1.05);
+    box-shadow:0 10px 20px rgba(0,0,0,0.5);
+    z-index:2;
+}
+
+.player.active{
+    border-left:6px solid yellow;
+    background:rgba(255,255,0,0.1);
+    transform:scale(1.05);
+}
+
+.score {
+    font-size: 24px;
+    font-weight: bold;
+    color: #000;
+}
+.invalid {
+    background-color: red !important;
+}
+.piece {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    transform-style: preserve-3d;
+    transition: transform 0.6s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* awal warna */
+.black { background-color: black; }
+.white { background-color: white; }
+
+/* class untuk flip */
+.flip {
+    transform: rotateY(180deg);
+}
+
+body {
+    background: #111;
+}
+.card {
+    background: #1c1c1c;
+    color: white;
+}
+.form-control {
+    background: #2a2a2a;
+    border: none;
+    color: white;
+}
+.form-control:focus {
+    background: #2a2a2a;
+    color: white;
+    box-shadow: none;
+}
+.hidden {
+    display:none !important;
+}
+
+.btn-pass{
+    padding:10px 22px;
+    border:none;
+    border-radius:8px;
+    font-weight:600;
+    background:#343a40;
+    color:#fff;
+    transition:0.2s ease;
+}
+
+.btn-pass:hover{
+    background:#495057;
+    transform:translateY(-1px);
+}
+
+.btn-pass:active{
+    transform:scale(0.96);
+}
+
+.btn-pass:focus{
+    outline:none;
+    box-shadow:0 0 0 3px rgba(255,193,7,0.4);
+}
+.game-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    backdrop-filter: blur(4px);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.game-result-card {
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    text-align: center;
+    min-width: 280px;
+    animation: popIn 0.3s ease;
+}
+
+.game-result-card h1 {
+    font-size: 28px;
+    margin-bottom: 10px;
+}
+
+.game-result-card p {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+.result-buttons button {
+    margin: 10px;
+    padding: 10px 16px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+@keyframes popIn {
+    from {
+        transform: scale(0.8);
+        opacity: 0;
+    }
+    to {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+.game-result-card {
+    box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+.d-none {
+    display: none;
+}
+

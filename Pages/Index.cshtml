@@ -2,148 +2,165 @@
 @model IndexModel
 @{
     ViewData["Title"] = "Othello";
+    <link rel="stylesheet" href="~/css/style.css" />
 }
 
-<div class="d-flex flex-column justify-content-center align-items-center mt-4 bg-black">
-    <h2 class="fw-bold">Othello</h2>
-    <p>Current Player: <span id="currentPlayer">-</span></p>
+@* @page
+@model YourNamespace.Pages.PlayerModel
+@{
+    ViewData["Title"] = "Setup Player";
+} *@
 
-    <div class="score-card mb-3">
-        <div class="player">
-            <span id="player1Name">-</span>
-            <span class="score" id="player1Score">0</span>
+<div id="player-form" class=" container d-flex justify-content-center align-items-center vh-100" style="display:none;">
+    <div class="card shadow-lg border-0 rounded-4 p-4" style="max-width:500px; width:100%;">
+        
+        <div class="text-center mb-4">
+            <h3 class="fw-bold">🎮 Setup Players</h3>
+            <p class="text-muted">Masukkan nama pemain untuk mulai game</p>
         </div>
-        <div class="player">
-            <span id="player2Name">-</span>
-            <span class="score" id="player2Score">0</span>
-        </div>
-    </div>
 
-    <div id="board" class="board"></div>
+        <form method="post" onsubmit="onSubmit(event)">
+            <div class="mb-3">
+                <label class="form-label fw-semibold">⚫ Player 1 (Black)</label>
+                <input type="text" name="Player1" id="player1" class="form-control form-control-md"
+                       placeholder="Masukkan nama Player 1" required />
+            </div>
 
-    <div class="mt-3">
-        <button class="btn btn-warning me-2" onclick="passTurn()">Pass</button>
-        <button class="btn btn-success" onclick="startGame()">Restart Game</button>
+            <div class="mb-4">
+                <label class="form-label fw-semibold">⚪ Player 2 (White)</label>
+                <input type="text" name="Player2" id="player2" class="form-control form-control-md fs-12 fw-semibold"
+                       placeholder="Masukkan nama Player 2" required />
+            </div>
+
+            <div class="d-grid">
+                <button type="submit"  class="btn btn-dark btn-lg rounded-3">
+                    🚀 Mulai Game
+                </button>
+            </div>
+        </form>
+
     </div>
 </div>
 
-<style>
-.board {
-
-    display: grid;
-    grid-template-columns: repeat(8, 50px);
-    grid-template-rows: repeat(8, 50px);
-    border-radius: 15px;
-    gap: 3px;
-    @* gap: 0; /* gap dihilangkan, pakai border sel saja */ *@
-    border: 4px solid #000; /* bingkai papan */
-    @* background-color: #006400; /* hijau papan Othello */ *@
-    background-color: #3D800D;
-    padding: 5px;
+<div id="game-board" class="hidden d-flex flex-column justify-content-center align-items-center bg-black" style="display:none;">
+    <h2 class="fw-bold text-white">Othello</h2>
     
+   <div class="score-card mb-3">
 
-}
-.cell {
-    width: 50px;
-    height: 50px;
-    border-radius: 10px;
-    background-color: #006400; /* hijau papan */
-    @* border: 1px solid #000;   /* garis antar sel */ *@
-    display: flex;
-    align-items: center;
-    
-    justify-content: center;
-    cursor: pointer;
-    box-sizing: border-box;
-}
-.black, .white {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-}
-.black { background-color: black; }
-.white { background-color: white; }
-.valid-move {
-    border: 2px solid yellow;
-}
-.score-card {
-    display: flex;
-    justify-content: space-around;
-    align-items: center;
-    width: 400px;
-    background-color: #fff;
-    border-radius: 20px;
-    padding: 10px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-}
-.player {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.score {
-    font-size: 24px;
-    font-weight: bold;
-    color: #000;
-}
-.invalid {
-    background-color: red !important;
-}
-.piece {
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    transform-style: preserve-3d;
-    transition: transform 0.6s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
+    <div id="player1Card" class="player-half">
+        <div class="player-name" id="player1Name">-</div>
+        <div class="score" id="player1Score">0</div>
+    </div>
 
-/* awal warna */
-.black { background-color: black; }
-.white { background-color: white; }
+    <div id="player2Card" class="player-half">
+        <div class="player-name" id="player2Name">-</div>
+        <div class="score" id="player2Score">0</div>
+    </div>
 
-/* class untuk flip */
-.flip {
-    transform: rotateY(180deg);
-}
+</div>
 
-</style>
+
+   
+   <div class="d-flex">
+        <div class="mt-3 text-center">
+            <button class="btn-pass" onclick="passTurn()">
+                Pass
+            </button>
+        </div>
+        <div id="board" class="board"></div>
+        <div class="mt-3 text-center">
+            <button class="btn-pass" onclick="passTurn()">
+                Pass
+            </button>
+        </div>
+
+    @* Toas invalid move *@
+    <div class="toast-container position-fixed bottom-0 end-0 p-3">
+    <div id="invalidMoveToast" class="toast text-bg-danger border-0" role="alert">
+        <div class="d-flex">
+            <div class="toast-body">
+                Invalid move! Pilih posisi yang valid.
+            </div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+</div>
+
+<div id="gameOverlay" class="game-overlay d-none">
+    <div class="game-result-card">
+        <h1 id="resultTitle">⚫ Black Wins!</h1>
+        <p id="resultScore">40 - 24</p>
+
+        <div class="result-buttons">
+            <button onclick="startGame()">🔁 Play Again</button>
+            <button onclick="goToMenu()">🏠 Menu</button>
+        </div>
+    </div>
+</div>
+
+</div>
 
 <script>
-const boardDiv = document.getElementById("board");
-const currentPlayerSpan = document.getElementById("currentPlayer");
-const player1NameSpan = document.getElementById("player1Name");
-const player2NameSpan = document.getElementById("player2Name");
-const player1ScoreSpan = document.getElementById("player1Score");
-const player2ScoreSpan = document.getElementById("player2Score");
+    const form = document.getElementById("player-form");
+    const board = document.getElementById("game-board");
+    const boardDiv = document.getElementById("board");
+
+    const player1NameSpan = document.getElementById("player1Name");
+    const player2NameSpan = document.getElementById("player2Name");
+
 
 let players = []; // Akan diisi dari API
 
-async function startGame() {
+
+   async function onSubmit(e){
+    e.preventDefault();
+        console.log("MASUK SINI GA ")
+        let p1 = document.getElementById("player1").value;
+        let p2 = document.getElementById("player2").value;
+
+        players = [p1, p2];
+       
+
+        localStorage.setItem("players", JSON.stringify(players));
+        board.classList.remove("hidden");
+        form.classList.add("hidden");
+        await startGame(players)
+    }
+
+async function startGame(players) {
     // ambil nama dari input atau default
-    const playerNames = ["Deria","Syafa"]; // Bisa diambil input form nanti
+    let playerBackup = JSON.parse(localStorage.getItem("players"));
+    let playersFind = players ?? playerBackup;
 
     const res = await fetch("http://localhost:5002/Othello/start", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(playerNames)
+        body: JSON.stringify(playersFind)
     });
 
     if (!res.ok) {
         console.error("Failed to start game", await res.text());
         return;
     }
-
-    const data = await res.json();
-    players = [data.currentPlayer.name, playerNames.find(n => n !== data.currentPlayer.name)];
     
-    // Update UI nama pemain otomatis
-    player1NameSpan.innerText = players[0];
-    player2NameSpan.innerText = players[1];
+    const data = await res.json();
+    const opponent = playersFind.find(n => n !== data.currentPlayer.name);
 
+    playerss = [data.currentPlayer.name, opponent];
+
+    // simpan mapping warna tetap
+    playerColors = {
+        [data.currentPlayer.name]: data.currentPlayer.color,
+        [opponent]: data.currentPlayer.color === "Black" ? "White" : "Black"
+    };
+
+    // Update UI nama pemain otomatis
+    player1NameSpan.innerText = `⚫ ${playerss[0]} `;
+    player2NameSpan.innerText = `⚪ ${playerss[1]} `; 
+    
     await loadStatus();
+    document.getElementById("gameOverlay").classList.add("d-none");
+
 }
 
 async function loadStatus() {
@@ -154,16 +171,26 @@ async function loadStatus() {
         return;
     }
 
+
     const data = await statusRes.json();
-        console.log("Data dari API loadStatus:", data);
 
     const boardData = data.board;
     const currentPlayer = data.currentPlayer;
     const validMoves = data.validMoves;
     const scores = data.score
+   
+    const {isGameOver} =data
+    if(isGameOver){
+        let playerWin = scores.black > scores.white ?
+         "black" : scores.white > scores.black ? "white" : 'draw'
+        showGameResult(playerWin,scores.black,scores.white);
+    }
+    
+    const player1Card = document.getElementById("player1Card");
+    const player2Card = document.getElementById("player2Card");
 
-    // Update current player
-    currentPlayerSpan.innerText = `${currentPlayer.name} (${currentPlayer.color})`;
+    player1Card.classList.toggle("active", currentPlayer.color === "Black");
+    player2Card.classList.toggle("active", currentPlayer.color === "White");
 
     // Build board
     boardDiv.innerHTML = "";
@@ -177,29 +204,7 @@ async function loadStatus() {
             boardDiv.appendChild(cellDiv);
         }
     }
-
-    function flipPiece(cellDiv, newColor) {
-    const pieceDiv = cellDiv.querySelector(".black, .white");
-    if (!pieceDiv) return;
-
-    // tambahkan class flip
-    pieceDiv.classList.add("flip");
-
-    // tunggu setengah animasi lalu ganti warnanya
-    setTimeout(() => {
-        if (newColor === "Black") {
-            pieceDiv.classList.remove("white");
-            pieceDiv.classList.add("black");
-        } else {
-            pieceDiv.classList.remove("black");
-            pieceDiv.classList.add("white");
-        }
-    }, 300); // setengah durasi animasi
-
-    // hapus class flip setelah selesai
-    setTimeout(() => pieceDiv.classList.remove("flip"), 600);
-}
-
+   
     // Highlight valid moves
     for (const pos of validMoves) {
         const index = pos.row * boardData.size + pos.col;
@@ -207,17 +212,26 @@ async function loadStatus() {
     }
 
     // Update scores dinamis berdasarkan warna
-    const playerDivs = document.querySelectorAll(".score-card .player");
-    for (let div of playerDivs) {
-        const nameSpan = div.querySelector("span:first-child");
-        const scoreSpan = div.querySelector(".score");
+   const playerDivs = document.querySelectorAll(".score-card .player-half");
 
-        if (nameSpan && scoreSpan) {
-            // Cari warna pemain ini
-            const playerName = nameSpan.innerText;
-            // Ambil warna dari API currentPlayer atau players list
-            const color = playerName === currentPlayer.name ? currentPlayer.color : (currentPlayer.color === "Black" ? "White" : "Black");
-            scoreSpan.innerText = color === "Black" ? scores.black : scores.white;
+for (let div of playerDivs) {
+
+    const nameSpan = div.querySelector(".player-name");
+    const scoreSpan = div.querySelector(".score");
+
+    if (nameSpan && scoreSpan) {
+
+        const playerName = nameSpan.innerText
+            .replace("⚫ ", "")
+            .replace("⚪ ", "")
+            .trim();
+
+        const color = playerColors[playerName];
+
+        scoreSpan.innerText =
+            color === "Black"
+                ? scores.black
+                : scores.white;
         }
     }
 }
@@ -229,15 +243,9 @@ async function play(row, col) {
         body: JSON.stringify({ row, col })
     });
     if (!res.ok) {
-
         console.error("Invalid move");
-         const index = row * 8 + col;
-        const cell = boardDiv.children[index];
-        if (cell) {
-            cell.classList.add("invalid");
-            setTimeout(() => cell.classList.remove("invalid"), 600);
-        }
-
+        highlightInvalidCell(row, col);
+        showInvalidMoveToast();
         return;
     }
     await loadStatus();
@@ -248,16 +256,70 @@ async function passTurn() {
     await loadStatus();
 }
 
-function highlightInvalidCell(row, col) {
-    const index = row * 8 + col; // board 8x8
-    const cell = boardDiv.children[index];
-    if (!cell) return;
 
-    cell.classList.add("invalid");
-    setTimeout(() => {
-        cell.classList.remove("invalid");
-    }, 600); // 0.6 detik merah
+function highlightInvalidCell(row, col) {
+    const index = row * 8 + col;
+        const cell = boardDiv.children[index]
+    if (cell) {
+        cell.classList.add("invalid");
+    setTimeout(() => cell.classList.remove("invalid"), 600);
+    }
+    return;
 }
 
-startGame();
+function goToMenu(){
+    localStorage.removeItem("players");
+    board.classList.add("hidden");
+    form.classList.remove("hidden")
+
+}
+
+function showInvalidMoveToast() {
+    const toastEl = document.getElementById('invalidMoveToast');
+    const toast = new bootstrap.Toast(toastEl);
+    toast.show();
+    setTimeout(() => toast.hide(), 600);
+}
+
+function showGameResult(result, blackScore, whiteScore) {
+    const overlay = document.getElementById("gameOverlay");
+    const title = document.getElementById("resultTitle");
+    const score = document.getElementById("resultScore");
+
+    score.innerText = `${blackScore} - ${whiteScore}`;
+
+    if (result === "black") {
+        title.innerText = "⚫ Black Wins!";
+    } 
+    else if (result === "white") {
+        title.innerText = "⚪ White Wins!";
+    } 
+    else {
+        title.innerText = "🤝 Draw Game!";
+    }
+
+    overlay.classList.remove("d-none");
+}
+
+
+window.addEventListener("DOMContentLoaded", async () => {
+
+    const savedPlayers = JSON.parse(localStorage.getItem("players"));
+
+    if (savedPlayers && savedPlayers.length === 2) {
+
+        form.classList.add("hidden");
+        board.classList.remove("hidden");
+
+        await startGame(savedPlayers);
+
+    } else {
+
+        form.classList.remove("hidden");
+        board.classList.add("hidden");
+
+    }
+
+});
+
 </script>

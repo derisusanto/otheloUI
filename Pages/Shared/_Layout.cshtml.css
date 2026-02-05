@@ -10,6 +10,11 @@ a.navbar-brand {
 a {
   color: #0077cc;
 }
+.bg-black{
+  height: 100vh;
+  width: 100%;
+  background-color: #0000;
+}
 
 .btn-primary {
   color: #fff;
