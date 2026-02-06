@@ -9,8 +9,16 @@
       "PackagePath": "staticwebassets/css/site.css"
     },
     {
+      "Id": "/Users/derisusanto/Documents/OthelloUI/wwwroot/css/style.css",
+      "PackagePath": "staticwebassets/css/style.css"
+    },
+    {
       "Id": "/Users/derisusanto/Documents/OthelloUI/wwwroot/favicon.ico",
       "PackagePath": "staticwebassets/favicon.ico"
+    },
+    {
+      "Id": "/Users/derisusanto/Documents/OthelloUI/wwwroot/images/bg-othello.jpg",
+      "PackagePath": "staticwebassets/images/bg-othello.jpg"
     },
     {
       "Id": "/Users/derisusanto/Documents/OthelloUI/wwwroot/js/site.js",
