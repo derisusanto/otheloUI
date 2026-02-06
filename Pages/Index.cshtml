@@ -164,6 +164,7 @@ async function startGame(players) {
 }
 
 async function loadStatus() {
+    await loadBoard()
     const statusRes = await fetch("http://localhost:5002/Othello/status");
     if (!statusRes.ok) {
         const text = await statusRes.text();
@@ -173,7 +174,7 @@ async function loadStatus() {
 
 
     const data = await statusRes.json();
-
+    console.log("data =>",data);
     const boardData = data.board;
     const currentPlayer = data.currentPlayer;
     const validMoves = data.validMoves;
@@ -193,7 +194,7 @@ async function loadStatus() {
     player2Card.classList.toggle("active", currentPlayer.color === "White");
 
     // Build board
-    boardDiv.innerHTML = "";
+    @* boardDiv.innerHTML = "";
     for (let r = 0; r < boardData.size; r++) {
         for (let c = 0; c < boardData.size; c++) {
             const cell = boardData.cells[r][c];
@@ -203,7 +204,7 @@ async function loadStatus() {
             cellDiv.addEventListener("click", () => play(r, c));
             boardDiv.appendChild(cellDiv);
         }
-    }
+    } *@
    
     // Highlight valid moves
     for (const pos of validMoves) {
@@ -214,10 +215,10 @@ async function loadStatus() {
     // Update scores dinamis berdasarkan warna
    const playerDivs = document.querySelectorAll(".score-card .player-half");
 
-for (let div of playerDivs) {
+    for (let div of playerDivs) {
 
-    const nameSpan = div.querySelector(".player-name");
-    const scoreSpan = div.querySelector(".score");
+        const nameSpan = div.querySelector(".player-name");
+        const scoreSpan = div.querySelector(".score");
 
     if (nameSpan && scoreSpan) {
 
@@ -234,7 +235,37 @@ for (let div of playerDivs) {
                 : scores.white;
         }
     }
+
 }
+
+async function loadBoard() {
+    const statusRes = await fetch("http://localhost:5002/Othello/board");
+    if (!statusRes.ok) {
+        const text = await statusRes.text();
+        console.error("Error loading board:", text);
+        return;
+    }
+
+    const data = await statusRes.json();
+    // Di sini boardData = data langsung, bukan data.board
+    const boardData = data; 
+
+    boardDiv.innerHTML = "";
+
+    for (let r = 0; r < boardData.size; r++) {
+        for (let c = 0; c < boardData.size; c++) {
+            const cell = boardData.cells[r][c];
+            const cellDiv = document.createElement("div");
+            cellDiv.className = "cell";
+            if (cell.piece) {
+                cellDiv.innerHTML = `<div class="${cell.piece.color.toLowerCase()}"></div>`;
+            }
+            cellDiv.addEventListener("click", () => play(r, c));
+            boardDiv.appendChild(cellDiv);
+        }
+    }
+}
+
 
 async function play(row, col) {
     const res = await fetch("http://localhost:5002/Othello/play", {
