@@ -5,175 +5,164 @@
     <link rel="stylesheet" href="~/css/style.css" />
 }
 
-@* @page
-@model YourNamespace.Pages.PlayerModel
-@{
-    ViewData["Title"] = "Setup Player";
-} *@
-<!-- Welcome Page + Loading Screen -->
+<!-- ===================================
+     WELCOME PAGE + LOADING SCREEN
+     =================================== -->
 <div id="welcome-page" class="welcome-page">
-    <!-- Loading overlay -->
+    <!-- Loading Screen Overlay -->
     <div id="loading-screen" class="loading-screen">
-        <img src="~/images/othello-logo.png" alt="Othello Logo" class="logo" />
+        <div class="logo" style="width:120px;height:120px;background:radial-gradient(circle at 30% 30%, #00d4aa, #00a896);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:3rem;color:#0a0a0f;font-weight:800;">O</div>
         <div class="loader"></div>
     </div>
 
-    <!-- Main content -->
+    <!-- Welcome Content -->
     <div class="welcome-content hidden">
-        <img src="~/images/othello-board.png" alt="Othello Board" class="board-img" />
+        <div style="width:180px;height:180px;background:linear-gradient(135deg, #2d5a27 0%, #1e4620 100%);border-radius:20px;margin:0 auto 2rem;display:grid;grid-template-columns:repeat(4,1fr);gap:4px;padding:12px;box-shadow:0 8px 40px rgba(0,0,0,0.5), 0 0 60px rgba(46, 125, 50, 0.3);">
+            <div style="background:#388e3c;border-radius:4px;"></div>
+            <div style="background:#388e3c;border-radius:4px;"></div>
+            <div style="background:#388e3c;border-radius:4px;"></div>
+            <div style="background:#388e3c;border-radius:4px;"></div>
+            <div style="background:#388e3c;border-radius:4px;"></div>
+            <div style="background:radial-gradient(circle at 30% 30%, #fff, #d0d0d0);border-radius:50%;"></div>
+            <div style="background:radial-gradient(circle at 30% 30%, #444, #000);border-radius:50%;"></div>
+            <div style="background:#388e3c;border-radius:4px;"></div>
+            <div style="background:#388e3c;border-radius:4px;"></div>
+            <div style="background:radial-gradient(circle at 30% 30%, #444, #000);border-radius:50%;"></div>
+            <div style="background:radial-gradient(circle at 30% 30%, #fff, #d0d0d0);border-radius:50%;"></div>
+            <div style="background:#388e3c;border-radius:4px;"></div>
+            <div style="background:#388e3c;border-radius:4px;"></div>
+            <div style="background:#388e3c;border-radius:4px;"></div>
+            <div style="background:#388e3c;border-radius:4px;"></div>
+            <div style="background:#388e3c;border-radius:4px;"></div>
+        </div>
         <h1>🎮 Welcome to Othello!</h1>
-        <p>Challenge your friend and enjoy the game.</p>
+        <p>Challenge your friend in a classic strategy game</p>
         <button onclick="showPlayerForm()">Start Game</button>
     </div>
 
-    <!-- Animated background circles -->
+    <!-- Animated Background Circles -->
     <div class="bg-circles">
         <span></span><span></span><span></span><span></span><span></span>
         <span></span><span></span><span></span><span></span><span></span>
     </div>
 </div>
 
-<style>
-/* Base styles */
-body { margin:0; font-family:'Segoe UI', sans-serif; background:#121212; color:#fff; }
-.hidden { display:none !important; }
-
-/* Welcome Page */
-.welcome-page { position:relative; height:100vh; overflow:hidden; display:flex; justify-content:center; align-items:center; flex-direction:column; background: linear-gradient(135deg,#1e1e1e,#2c2c2c); text-align:center; }
-.welcome-content { position:relative; z-index:10; animation: fadeIn 1.5s ease forwards; }
-.welcome-content h1 { font-size:3rem; margin:1rem 0; animation: floatText 3s ease-in-out infinite alternate; }
-.welcome-content p { font-size:1.2rem; color:#ccc; margin-bottom:2rem; }
-.welcome-content button { background:#ff9900; border:none; padding:1rem 2rem; font-size:1.2rem; font-weight:bold; border-radius:0.5rem; cursor:pointer; transition:transform 0.3s, box-shadow 0.3s; }
-.welcome-content button:hover { transform:scale(1.1); box-shadow:0 0 20px #ff9900; }
-
-/* Othello board image */
-.board-img { width:200px; margin-bottom:1rem; animation: bounce 2s infinite alternate; }
-
-/* Loading screen */
-.loading-screen { position:absolute; top:0; left:0; width:100%; height:100%; background:#121212; display:flex; flex-direction:column; justify-content:center; align-items:center; z-index:20; }
-.loading-screen .logo { width:150px; margin-bottom:1rem; }
-.loader { border:4px solid #333; border-top:4px solid #ff9900; border-radius:50%; width:50px; height:50px; animation: spin 1s linear infinite; }
-
-/* Animated background circles */
-
-</style>
-
 <script>
-const loadingScreen = document.getElementById("loading-screen");
-const welcomeContent = document.querySelector(".welcome-content");
-const formPage = document.getElementById("player-form");
-
 // Simulate loading
 window.addEventListener("DOMContentLoaded", () => {
+    const loadingScreen = document.getElementById("loading-screen");
+    const welcomeContent = document.querySelector(".welcome-content");
+    
     setTimeout(() => {
-        loadingScreen.classList.add("hidden");
-        welcomeContent.classList.remove("hidden");
-    }, 2000); // 2 detik loading
+        if (loadingScreen) loadingScreen.classList.add("hidden");
+        if (welcomeContent) welcomeContent.classList.remove("hidden");
+    }, 2000); // 2 second loading
 });
 
 function showPlayerForm() {
-    welcomeContent.classList.add("hidden");
-    formPage.classList.remove("hidden");
+    const welcomePage = document.getElementById("welcome-page");
+    const formPage = document.getElementById("player-form");
+    
+    if (welcomePage) welcomePage.classList.add("hidden");
+    if (formPage) formPage.classList.remove("hidden");
 }
 </script>
 
-
-
-<div id="player-form" class=" container d-flex justify-content-center align-items-center vh-100" style="display:none;">
-    <div class="card shadow-lg border-0 rounded-4 p-4" style="max-width:500px; width:100%;">
-        
+<!-- ===================================
+     PLAYER FORM SECTION
+     =================================== -->
+<div id="player-form" class="hidden">
+    <div class="card">
         <div class="text-center mb-4">
             <h3 class="fw-bold">🎮 Setup Players</h3>
-            <p class="text-muted">Masukkan nama pemain untuk mulai game</p>
+            <p class="text-muted">Enter player names to start the game</p>
         </div>
 
         <form method="post" onsubmit="onSubmit(event)">
             <div class="mb-3">
                 <label class="form-label fw-semibold">⚫ Player 1 (Black)</label>
-                <input type="text" name="Player1" id="player1" class="form-control form-control-md"
-                       placeholder="Masukkan nama Player 1" required />
+                <input type="text" name="Player1" id="player1" class="form-control"
+                       placeholder="Enter Player 1 name" required />
             </div>
 
             <div class="mb-4">
                 <label class="form-label fw-semibold">⚪ Player 2 (White)</label>
-                <input type="text" name="Player2" id="player2" class="form-control form-control-md fs-12 fw-semibold"
-                       placeholder="Masukkan nama Player 2" required />
+                <input type="text" name="Player2" id="player2" class="form-control"
+                       placeholder="Enter Player 2 name" required />
             </div>
 
             <div class="d-grid">
-                <button type="submit"  class="btn btn-dark btn-lg rounded-3">
-                    🚀 Mulai Game
+                <button type="submit" class="btn-dark">
+                    🚀 Start Game
                 </button>
             </div>
         </form>
-
     </div>
 </div>
 
-<div id="game-board" class="hidden d-flex flex-column justify-content-center align-items-center bg-black" style="display:none;">
-    <h2 class="fw-bold text-white">Othello</h2>
+<!-- ===================================
+     GAME BOARD SECTION
+     =================================== -->
+<div id="game-board" class="hidden">
+    <h2>Othello</h2>
     
-   <div class="score-card mb-3">
-
-    <div id="player1Card" class="player-half">
-        <div class="player-name" id="player1Name">-</div>
-        <div class="score" id="player1Score">0</div>
+    <!-- Score Card -->
+    <div class="score-card">
+        <div id="player1Card" class="player-half">
+            <div class="player-name" id="player1Name">⚫ Player 1</div>
+            <div class="score" id="player1Score">2</div>
+        </div>
+        <div id="player2Card" class="player-half">
+            <div class="player-name" id="player2Name">⚪ Player 2</div>
+            <div class="score" id="player2Score">2</div>
+        </div>
     </div>
 
-    <div id="player2Card" class="player-half">
-        <div class="player-name" id="player2Name">-</div>
-        <div class="score" id="player2Score">0</div>
-    </div>
+    <!-- Game Board -->
+    <div id="board" class="board"></div>
 
-</div>
-
-
-   
-   <div class="d-flex">
-        <div class="mt-3 text-center">
-            <button class="btn-pass" onclick="passTurn()">
-                Pass
-            </button>
-        </div>
-        <div id="board" class="board"></div>
-        <div class="mt-3 text-center">
-            <button class="btn-pass" onclick="passTurn()">
-                Pass
-            </button>
-        </div>
-
-    @* Toas invalid move *@
+    <!-- Invalid Move Toast -->
     <div class="toast-container position-fixed bottom-0 end-0 p-3">
-    <div id="invalidMoveToast" class="toast text-bg-danger border-0" role="alert">
-        <div class="d-flex">
-            <div class="toast-body">
-                Invalid move! Pilih posisi yang valid.
+        <div id="invalidMoveToast" class="toast text-bg-danger border-0" role="alert">
+            <div class="d-flex">
+                <div class="toast-body">
+                    ❌ Invalid move! Choose a valid position.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
+        </div>
+    </div>
+
+    <!-- Game Over Overlay -->
+    <div id="gameOverlay" class="game-overlay d-none">
+        <div class="game-result-card">
+            <div id="resultIcon" class="result-icon">🏆</div>
+            <h1 id="resultTitle">Winner!</h1>
+            <p id="resultWinner" class="result-winner"></p>
+            <div id="resultScore" class="result-score">
+                <span class="score-item">
+                    <span class="score-label">⚫</span>
+                    <span id="blackFinalScore">0</span>
+                </span>
+                <span class="score-vs">vs</span>
+                <span class="score-item">
+                    <span class="score-label">⚪</span>
+                    <span id="whiteFinalScore">0</span>
+                </span>
+            </div>
+
+            <div class="result-buttons">
+                <button onclick="startGame()">🔁 Play Again</button>
+                <button onclick="goToMenu()">🏠 Menu</button>
+            </div>
         </div>
     </div>
 </div>
 
-<div id="gameOverlay" class="game-overlay d-none">
-    <div class="game-result-card">
-        <h1 id="resultTitle">⚫ Black Wins!</h1>
-        <p id="resultScore">40 - 24</p>
-
-        <div class="result-buttons">
-            <button onclick="startGame()">🔁 Play Again</button>
-            <button onclick="goToMenu()">🏠 Menu</button>
-        </div>
-    </div>
-</div>
-
-</div>
-
-
-
+<!-- ===================================
+     GAME LOGIC SCRIPTS (UNCHANGED)
+     =================================== -->
 <script>
-
-
-
     const form = document.getElementById("player-form");
     const board = document.getElementById("game-board");
     const boardDiv = document.getElementById("board");
@@ -258,6 +247,10 @@ async function loadStatus() {
     const currentPlayer = data.currentPlayer;
     const validMoves = data.validMoves ?? [];
     const scores = data.score ?? { Black: 0, White: 0 };
+    // Normalize scores to handle case sensitivity
+    const scoreBlack = scores.Black ?? scores.black ?? 0;
+    const scoreWhite = scores.White ?? scores.white ?? 0;
+
     const isGameOver = data.isGameOver ?? false;
     
     const boardData = data.board ?? data; 
@@ -269,8 +262,8 @@ async function loadStatus() {
     if (!currentPlayer) return;
 
     // update player card highlight
-    document.getElementById("player1Card").classList.toggle("active", currentPlayer.color === "Black");
-    document.getElementById("player2Card").classList.toggle("active", currentPlayer.color === "White");
+    document.getElementById("player1Card").classList.toggle("active", currentPlayer.color === "Black" || currentPlayer.color === "black");
+    document.getElementById("player2Card").classList.toggle("active", currentPlayer.color === "White" || currentPlayer.color === "white");
 
     // highlight valid moves
     for (const pos of validMoves) {
@@ -281,31 +274,33 @@ async function loadStatus() {
     // update score dinamis
    const playerDivs = document.querySelectorAll(".score-card .player-half");
 
-for (let div of playerDivs) {
-    const nameSpan = div.querySelector(".player-name");
-    const scoreSpan = div.querySelector(".score");
+    for (let div of playerDivs) {
+        const nameSpan = div.querySelector(".player-name");
+        const scoreSpan = div.querySelector(".score");
 
-    if (nameSpan && scoreSpan) {
-        const playerName = nameSpan.innerText
-            .replace("⚫ ", "")
-            .replace("⚪ ", "")
-            .trim();
+        if (nameSpan && scoreSpan) {
+            const playerName = nameSpan.innerText
+                .replace("⚫ ", "")
+                .replace("⚪ ", "")
+                .trim();
 
-        const color = playerColors[playerName];
-
-        scoreSpan.innerText =
-            color === "Black"
-                ? scores.black
-                : scores.white;
+            const color = playerColors[playerName];
+            
+            // Check color case-insensitively
+            if (color && (color === "Black" || color === "black")) {
+                scoreSpan.innerText = scoreBlack;
+            } else if (color && (color === "White" || color === "white")) {
+                scoreSpan.innerText = scoreWhite;
+            }
+        }
     }
-}
 
 
     // jika game over
     if (isGameOver) {
-        const winner = scores.Black > scores.White ? "black" :
-                       scores.White > scores.Black ? "white" : "draw";
-        showGameResult(winner, scores.Black, scores.White);
+        const winner = scoreBlack > scoreWhite ? "black" :
+                       scoreWhite > scoreBlack ? "white" : "draw";
+        showGameResult(winner, scoreBlack, scoreWhite);
     }
 }
 
@@ -353,15 +348,93 @@ async function passTurn() {
     await loadStatus();
 }
 
+// Show invalid move toast
+function showInvalidMoveToast() {
+    const toastEl = document.getElementById('invalidMoveToast');
+    const toast = new bootstrap.Toast(toastEl, { delay: 2000 });
+    toast.show();
+}
+
+// Highlight invalid cell
+function highlightInvalidCell(row, col) {
+    const boardData = { size: 8 }; // assuming 8x8 board
+    const index = row * boardData.size + col;
+    const cell = boardDiv.children[index];
+    if (cell) {
+        cell.classList.add('invalid');
+        setTimeout(() => cell.classList.remove('invalid'), 500);
+    }
+}
+
+// Show game result overlay
+function showGameResult(winner, blackScore, whiteScore) {
+    const overlay = document.getElementById('gameOverlay');
+    const icon = document.getElementById('resultIcon');
+    const title = document.getElementById('resultTitle');
+    const winnerText = document.getElementById('resultWinner');
+    const blackFinal = document.getElementById('blackFinalScore');
+    const whiteFinal = document.getElementById('whiteFinalScore');
+    
+    // Get player names
+    let blackPlayerName = '';
+    let whitePlayerName = '';
+    
+    for (const [name, color] of Object.entries(playerColors)) {
+        if (color === 'Black') blackPlayerName = name;
+        if (color === 'White') whitePlayerName = name;
+    }
+    
+    // Set scores
+    blackFinal.textContent = blackScore;
+    whiteFinal.textContent = whiteScore;
+    
+    if (winner === 'black') {
+        icon.textContent = '🏆';
+        title.textContent = 'Victory!';
+        winnerText.textContent = `${blackPlayerName} wins!`;
+    } else if (winner === 'white') {
+        icon.textContent = '🏆';
+        title.textContent = 'Victory!';
+        winnerText.textContent = `${whitePlayerName} wins!`;
+    } else {
+        icon.textContent = '🤝';
+        title.textContent = 'Draw!';
+        winnerText.textContent = 'It\'s a tie!';
+    }
+    
+    overlay.classList.remove('d-none');
+}
+
+// Go back to menu
+function goToMenu() {
+    localStorage.removeItem("players");
+    document.getElementById("gameOverlay").classList.add("d-none");
+    board.classList.add("hidden");
+    form.classList.add("hidden");
+    document.getElementById("welcome-page").classList.remove("hidden");
+    document.querySelector(".welcome-content").classList.remove("hidden");
+    document.getElementById("loading-screen").classList.add("hidden");
+}
+
 window.addEventListener("DOMContentLoaded", async () => {
     const savedPlayers = JSON.parse(localStorage.getItem("players"));
     if (Array.isArray(savedPlayers) && savedPlayers.length === 2) {
-        await startGame(savedPlayers);
+        document.getElementById("welcome-page").classList.add("hidden");
+        try {
+            await startGame(savedPlayers);
+        } catch (error) {
+            console.error("Failed to connect to game server:", error);
+            // Clear saved players and show welcome page on failure
+            localStorage.removeItem("players");
+            document.getElementById("welcome-page").classList.remove("hidden");
+            document.querySelector(".welcome-content").classList.remove("hidden");
+            document.getElementById("loading-screen").classList.add("hidden");
+            form.classList.add("hidden");
+            board.classList.add("hidden");
+        }
     } else {
-        form.classList.remove("hidden");
+        form.classList.add("hidden");
         board.classList.add("hidden");
     }
 });
-
-
 </script>
