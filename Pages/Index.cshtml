@@ -33,7 +33,7 @@
             <div style="background:#388e3c;border-radius:4px;"></div>
             <div style="background:#388e3c;border-radius:4px;"></div>
         </div>
-        <h1>🎮 Welcome to Othello!</h1>
+        <h1>Welcome to Othello!</h1>
         <p>Challenge your friend in a classic strategy game</p>
         <button onclick="showPlayerForm()">Start Game</button>
     </div>
@@ -70,26 +70,26 @@ function showPlayerForm() {
 <div id="player-form" class="hidden">
     <div class="card">
         <div class="text-center mb-4">
-            <h3 class="fw-bold">🎮 Setup Players</h3>
+            <h3 class="fw-bold"> Setup Players</h3>
             <p class="text-muted">Enter player names to start the game</p>
         </div>
 
         <form method="post" onsubmit="onSubmit(event)">
             <div class="mb-3">
-                <label class="form-label fw-semibold">⚫ Player 1 (Black)</label>
-                <input type="text" name="Player1" id="player1" class="form-control"
+                <label class="form-label fw-semibold"> Player 1 - Black</label>
+                <input type="text" name="Player1" value="" id="player1" class="form-control"
                        placeholder="Enter Player 1 name" required />
             </div>
 
             <div class="mb-4">
-                <label class="form-label fw-semibold">⚪ Player 2 (White)</label>
-                <input type="text" name="Player2" id="player2" class="form-control"
+                <label class="form-label fw-semibold"> Player 2 - White</label>
+                <input type="text" name="Player2" id="player2" class="form-control" value=""
                        placeholder="Enter Player 2 name" required />
             </div>
 
             <div class="d-grid">
                 <button type="submit" class="btn-dark">
-                    🚀 Start Game
+                     Start Game
                 </button>
             </div>
         </form>
@@ -103,11 +103,11 @@ function showPlayerForm() {
     <!-- Score Card -->
     <div class="score-card">
         <div id="player1Card" class="player-half">
-            <div class="player-name" id="player1Name">⚫ Player 1</div>
+            <div class="player-name" id="player1Name"> Player 1</div>
             <div class="score" id="player1Score">2</div>
         </div>
         <div id="player2Card" class="player-half">
-            <div class="player-name" id="player2Name">⚪ Player 2</div>
+            <div class="player-name" id="player2Name"> Player 2</div>
             <div class="score" id="player2Score">2</div>
         </div>
     </div>
@@ -120,13 +120,17 @@ function showPlayerForm() {
         <div id="invalidMoveToast" class="toast text-bg-danger border-0" role="alert">
             <div class="d-flex">
                 <div class="toast-body">
-                    ❌ Invalid move! Choose a valid position.
+                     Invalid move! Choose a valid position.
                 </div>
                 <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"></button>
             </div>
         </div>
     </div>
-
+    <div>
+        <button onclick="passTurn()">Pass</button>
+    </div>
+<audio id="keyboardSound" src="~/sound/mixkit-single-key-type-2533.wav"></audio>
+<audio id="keyboardSoundError" src="~/sound/error.wav"></audio>
     <!-- Game Over Overlay -->
     <div id="gameOverlay" class="game-overlay d-none">
         <div class="game-result-card">
@@ -146,12 +150,13 @@ function showPlayerForm() {
             </div>
 
             <div class="result-buttons">
-                <button onclick="startGame()">🔁 Play Again</button>
-                <button onclick="goToMenu()">🏠 Menu</button>
+                <button onclick="startGame()">Play Again</button>
+                <button onclick="goToMenu()"> Menu</button>
             </div>
         </div>
     </div>
 </div>
+
 
 
 <script>
@@ -162,7 +167,7 @@ function showPlayerForm() {
     const player1NameSpan = document.getElementById("player1Name");
     const player2NameSpan = document.getElementById("player2Name");
 
-
+    
 let players = []; 
 let playerColors = {}; 
 
@@ -216,8 +221,8 @@ async function startGame(playersInput) {
     playerColors = {};
     data.players.forEach(p => playerColors[p.name] = p.color);
 
-    player1NameSpan.innerText = `⚫ ${current}`;
-    player2NameSpan.innerText = `⚪ ${opponent}`;
+    player1NameSpan.innerText = `${current}`;
+    player2NameSpan.innerText = `${opponent}`;
 
     board.classList.remove("hidden");
     form.classList.add("hidden");
@@ -329,9 +334,16 @@ async function play(row, col) {
     if (!res.ok) {
         highlightInvalidCell(row, col);
         showInvalidMoveToast();
+        keyboardSoundError.play();
         return;
     }
-    await loadStatus();
+        await loadStatus();
+     if (keyboardSound) {
+        keyboardSound.currentTime = 0; // reset ke awal
+        keyboardSound.play();
+    }
+    
+
 }
 
 async function passTurn() {

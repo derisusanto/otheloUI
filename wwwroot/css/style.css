@@ -565,7 +565,7 @@ body {
 }
 
 .player-half.active::after {
-  content: '🎯';
+  content: '';
   position: absolute;
   top: 8px;
   right: 8px;
