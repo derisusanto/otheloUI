@@ -239,7 +239,6 @@ async function loadStatus() {
     const currentPlayer = data.currentPlayer;
     const validMoves = data.validMoves ?? [];
     const scores = data.score ?? { Black: 0, White: 0 };
-    // Normalize scores to handle case sensitivity
     const scoreBlack = scores.Black ?? scores.black ?? 0;
     const scoreWhite = scores.White ?? scores.white ?? 0;
 
